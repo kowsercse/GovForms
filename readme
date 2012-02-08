@@ -1,0 +1,66 @@
+
+########################################## Answer 1 ########################################## 
+
+It simplifies the use of JDBC and helps to avoid common errors. 
+It executes core JDBC workflow, leaving application code to provide 
+SQL and extract results. This class executes SQL queries or updates, 
+initiating iteration over ResultSets and catching JDBC exceptions 
+and translating them to the generic, more informative exception 
+hierarchy defined in the org.springframework.dao package.
+
+Following classes use JDBCDaoTemplate. Actually they are the 
+implementation for DAO used in the application.
+
+bd.gov.forms.dao.FormDaoImpl
+bd.gov.forms.dao.ListDaoImpl
+bd.gov.forms.dao.UserDaoImpl
+
+Its pitfalls
+1. We need to write SQL queries which is considered as "Boiler Plate Code"
+2. It will be hard to write database vendor independent SQL queries
+3. Sometimes it is needed to build sql query, which can be erroneous
+
+So we will use JPA which is a standard for JavaEE application leaving those responsibility to underlying layer.
+
+
+########################################## Answer 2 ##########################################
+Hibernate is an ORM.
+
+Advantages: it will generate database vendor independent SQL queries.
+Connection pooling & transaction management is possible to be done automatically.
+
+We can prefer using hibernate as persistance provider. Additionally JPA 
+has support from JavaEE standard for injecting EntityManager & handle transaction automatically.
+
+From the perspective of this application it is not possible to create beans for the dynamic 
+tables. We can consider using reflection to do that, but these are extreme cases.
+
+########################################## Answer 3 ##########################################
+Uses of Hibernate can be decided on 2 cases.
+Data Read
+Data Write
+
+Generally it is not preferable to use hibernate(any ORM) for data read. It is better to use SQL 
+statment or JDBCTemplate for this application.
+If Data Write is much more than Data read or about to be same I would prefer using Hibernate 
+instead of JDBCTemplate.
+
+According to uses of this applicatoin we can think that it will have much data read compare to 
+data write. So it should be preferable to have JDBC template.
+However we propose create seperating two different application. One for Form creation.
+Another for public uses & data entry or form download. Optionally third applicatoin can be 
+created for analyzing data. All of them can be packages as an ear project.
+ 
+########################################## Answer 4 ##########################################
+Following are the example uses
+
+@ModelAttribute("<something>")
+@Repository("formDao")
+@Controller
+@RequestMapping("<something>")
+@Service		//these could be used
+@Qualifier		//these could be used
+
+########################################## Answer 5 ##########################################
+DAOs follow the principal
+Controllers follow the principal
